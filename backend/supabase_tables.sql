@@ -25,18 +25,6 @@ create table if not exists public.job (
 );
 
 -- ==========================
--- 3️⃣ RESUME
--- ==========================
-create table if not exists public.resume (
-  resume_id uuid primary key default uuid_generate_v4(),
-  resume_url text not null,
-  parsed_json jsonb,
-  skills text[],
-  anonymized_url text,
-  created_at timestamptz default now()
-);
-
--- ==========================
 -- 4️⃣ APPLICATION
 -- ==========================
 create table if not exists public.application (
@@ -49,9 +37,6 @@ create table if not exists public.application (
     status in ('submitted', 'screened', 'invited', 'interviewed', 'rejected', 'accepted')
   ) default 'submitted',
   score numeric,
-  rubric_score jsonb,
-  rationale text,
-  application_token uuid default uuid_generate_v4(),
   created_at timestamptz default now()
 );
 

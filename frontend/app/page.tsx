@@ -11,6 +11,7 @@ export default function Home() {
           <div className="flex justify-between h-16">
             <div className="flex items-center">
               <h1 className="text-xl font-bold text-indigo-600">InterviewAI</h1>
+              <Link href='/jobs'>Jobs</Link>
             </div>
             <div className="flex items-center space-x-4">
               <Link href="/login" className="text-gray-600 hover:text-indigo-600 px-3 py-2 rounded-md text-sm font-medium">
@@ -44,14 +45,6 @@ export default function Home() {
                 className="w-full flex items-center justify-center px-8 py-3 border border-transparent text-base font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 md:py-4 md:text-lg md:px-10"
               >
                 Get Started for Free
-              </Link>
-            </div>
-            <div className="ml-3 rounded-md shadow">
-              <Link
-                href="/demo"
-                className="w-full flex items-center justify-center px-8 py-3 border border-transparent text-base font-medium rounded-md text-indigo-600 bg-white hover:bg-gray-50 md:py-4 md:text-lg md:px-10"
-              >
-                See Demo
               </Link>
             </div>
           </div>
