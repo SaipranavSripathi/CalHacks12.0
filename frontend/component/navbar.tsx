@@ -14,6 +14,11 @@ export default function Navbar() {
 
   const pathname = usePathname()
 
+  // Hide navbar on /interview page
+  if (pathname === '/interview') {
+    return null
+  }
+
   useEffect(() => {
     const getSession = async () => {
       const { data, error } = await supabase.auth.getSession()
