@@ -26,6 +26,7 @@ export default function PublicJobsPage() {
   const [submitSuccess, setSubmitSuccess] = useState(false);
   const jobsPerPage = 10;
   const router = useRouter();
+  
 
   useEffect(() => {
     fetchJobs();
@@ -96,30 +97,61 @@ export default function PublicJobsPage() {
 
     try {
       const { name, email, resume } = applicationForm;
-      if (!resume) throw new Error('Please upload a resume');
+      if (!resume) throw new Error("Please upload a resume");
 
+      // 1️⃣ Insert a new application row in Supabase first
+      const { data: insertedApp, error: insertError } = await supabase
+        .from("application")
+        .insert([
+          {
+            job_id: selectedJob?.job_id,
+            name,
+            email,
+            status: "submitted",
+          },
+        ])
+        .select()
+        .single();
+        
+
+      if (insertError) throw insertError;
+      console.log("✅ Inserted application:", insertedApp);
+
+      // 2️⃣ Upload the resume to your backend (include app_id so backend can update record if needed)
       const formData = new FormData();
-      formData.append('job_id', selectedJob?.job_id || '');
-      formData.append('job_description', selectedJob?.description || '');
-      formData.append('name', name);
-      formData.append('email', email);
-      formData.append('resume', resume);
+      formData.append("app_id", insertedApp.app_id); // useful for backend linking
+      formData.append("job_id", selectedJob?.job_id || "");
+      formData.append("job_description", selectedJob?.description || "");
+      formData.append("name", name);
+      formData.append("email", email);
+      formData.append("resume", resume);
 
-      const response = await fetch('http://localhost:5001/upload_resume', {
-        method: 'POST',
+      const response = await fetch("http://localhost:5001/upload_resume", {
+        method: "POST",
         body: formData,
       });
 
       if (!response.ok) {
         const text = await response.text();
-        throw new Error(`Webhook failed: ${response.status} - ${text}`);
+        throw new Error(`Resume upload failed: ${response.status} - ${text}`);
       }
 
+      const { resume_url } = await response.json();
+
+      // 3️⃣ (Optional) Update the application row with resume URL
+      const { error: updateError } = await supabase
+        .from("application")
+        .update({ resume: resume_url })
+        .eq("app_id", insertedApp.app_id);
+
+      if (updateError) throw updateError;
+
+      // 4️⃣ Success: reset form
       setSubmitSuccess(true);
-      setApplicationForm({ name: '', email: '', resume: null });
+      setApplicationForm({ name: "", email: "", resume: null });
     } catch (err: any) {
-      console.error('Error submitting application:', err);
-      alert(err.message || 'Failed to submit application');
+      console.error("Error submitting application:", err);
+      alert(err.message || "Failed to submit application");
     } finally {
       setSubmitting(false);
     }

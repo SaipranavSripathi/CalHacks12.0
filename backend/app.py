@@ -13,13 +13,18 @@ async def send_resume_to_activepieces(request, resume_text):
     job_id = request.form.get("job_id", "")
     job_description = request.form.get("job_description", "")
     email = request.form.get("email", "")
+    app_id = request.form.get("app_id", "")
 
     payload = {
+        "app_id": app_id,
         "job_id": job_id,
         "job_description": job_description,
         "email": email,
         "resume_text": resume_text
     }
+
+    print(f"📤 Sending to ActivePieces: {payload}")
+
     async with aiohttp.ClientSession() as session:
         async with session.post(ACTIVEPIECES_ENDPOINT, json=payload) as resp:
             try:
