@@ -65,7 +65,7 @@ export default function Navbar() {
               href="/"
               className="text-2xl font-bold bg-gradient-to-r from-indigo-600 to-blue-600 bg-clip-text text-transparent"
             >
-              InterviewAI
+              STIA
             </Link>
 
             <Link
