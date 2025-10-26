@@ -9,11 +9,15 @@ app = Flask(__name__)
 CORS(app)
 ACTIVEPIECES_ENDPOINT = "https://cloud.activepieces.com/api/v1/webhooks/jUFecMo9SCS0d5lt600EW"
 # Async function to post resume text (not binary) to Activepieces
-async def send_resume_to_activepieces(resume_text):
+async def send_resume_to_activepieces(request, resume_text):
+    job_id = request.form.get("job_id", "")
+    job_description = request.form.get("job_description", "")
+    email = request.form.get("email", "")
+
     payload = {
-        "job_id": "sdasads",
-        "job_description": "Data Analyst role requiring Python and SQL skills.",
-        "email": "selene_wang@berkeley.edu",
+        "job_id": job_id,
+        "job_description": job_description,
+        "email": email,
         "resume_text": resume_text
     }
     async with aiohttp.ClientSession() as session:
@@ -38,7 +42,7 @@ def upload_resume():
         # Send extracted text asynchronously to Activepieces endpoint
         loop = asyncio.new_event_loop()
         asyncio.set_event_loop(loop)
-        result = loop.run_until_complete(send_resume_to_activepieces(resume_text))
+        result = loop.run_until_complete(send_resume_to_activepieces(request, resume_text))
         print(result['data'])
         return jsonify(result)
     except Exception as e:

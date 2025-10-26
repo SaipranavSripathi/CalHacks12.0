@@ -30,7 +30,7 @@ create table if not exists public.job (
 create table if not exists public.application (
   app_id uuid primary key default uuid_generate_v4(),
   job_id uuid references public.job(job_id) on delete cascade,
-  resume_id uuid references public.resume(resume_id) on delete cascade,
+  resume text,
   name text not null,
   email text not null,
   status text check (
